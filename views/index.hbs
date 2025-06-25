@@ -1,0 +1,154 @@
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">
+                <i class="fas fa-futbol text-primary me-3"></i>
+                {{message}}
+            </h1>
+            <p class="lead">Witaj w systemie rezerwacji obiektów sportowych!</p>
+            <hr class="my-4">
+            <p>Ta aplikacja umożliwia rezerwowanie obiektów sportowych takich jak boiska, korty tenisowe i inne.</p>
+            
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Przeglądaj obiekty</h5>
+                            <p class="card-text">Znajdź dostępne obiekty sportowe w Twojej okolicy.</p>
+                            <a href="/objects" class="btn btn-primary">Przeglądaj</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-calendar-plus fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Zarezerwuj termin</h5>
+                            <p class="card-text">Zarezerwuj wybrany obiekt na dogodny termin.</p>
+                            <a href="/reservations" class="btn btn-success">Rezerwuj</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-user fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Zarządzaj kontem</h5>
+                            <p class="card-text">Sprawdź swoje rezerwacje i ustawienia konta.</p>
+                            {{#if user}}
+                                <a href="/profile" class="btn btn-info">Profil</a>
+                            {{else}}
+                                <a href="/login" class="btn btn-info">Zaloguj się</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>Status aplikacji</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-server text-success me-2"></i>
+                            <span>Serwer: <strong>Aktywny</strong></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-database text-info me-2"></i>
+                            <span>Baza danych: <strong>MySQL</strong></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-code text-warning me-2"></i>
+                            <span>Framework: <strong>Express.js</strong></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-palette text-primary me-2"></i>
+                            <span>Szablony: <strong>Handlebars</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs me-2"></i>Wymagania techniczne</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Zaimplementowane:</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Express.js - główny framework
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Handlebars (HBS) - silnik szablonów
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Express-session - zarządzanie sesjami
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check text-success me-2"></i>
+                                MySQL2 - obsługa bazy danych
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Routery - organizacja routingu
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Bezpieczeństwo:</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                Helmet - nagłówki bezpieczeństwa
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                Rate limiting - ograniczenie requestów
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                CORS - Cross-Origin Resource Sharing
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                Bcrypt - hashowanie haseł
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                Express-validator - walidacja danych
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

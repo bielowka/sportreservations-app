@@ -1,0 +1,55 @@
+<a href="/superadmin/users" class="btn btn-secondary mb-3">&larr; Powrót do listy</a>
+
+<h1>{{title}}: {{user.name}}</h1>
+
+{{#if user}}
+<div class="row">
+    <!-- Kolumna edycji -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Edytuj użytkownika
+            </div>
+            <div class="card-body">
+                <form action="/superadmin/users/edit/{{user.id}}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nazwa</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{user.name}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Rola</label>
+                        <select class="form-select" id="role" name="role">
+                            <option value="client" {{#if (eq user.role 'client')}}selected{{/if}}>Klient</option>
+                            <option value="admin" {{#if (eq user.role 'admin')}}selected{{/if}}>Admin</option>
+                            <option value="superadmin" {{#if (eq user.role 'superadmin')}}selected{{/if}}>Super Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kolumna usuwania -->
+    <div class="col-md-6">
+        <div class="card text-white bg-danger">
+            <div class="card-header">
+                Strefa niebezpieczna
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Usuń użytkownika</h5>
+                <p class="card-text">Tej operacji nie można cofnąć. Spowoduje to trwałe usunięcie konta użytkownika.</p>
+                <form action="/superadmin/users/delete/{{user.id}}" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?');">
+                    <button type="submit" class="btn btn-light">Usuń użytkownika na stałe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{else}}
+<p class="alert alert-warning">Nie znaleziono użytkownika.</p>
+{{/if}} 

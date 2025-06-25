@@ -1,0 +1,41 @@
+<a href="/superadmin" class="btn btn-secondary mb-3">&larr; Powrót do panelu</a>
+
+<h1>Zarządzanie Obiektami</h1>
+<p>Panel do zarządzania wszystkimi obiektami sportowymi w systemie.</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nazwa</th>
+            <th>Typ</th>
+            <th>Lokalizacja</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each objects}}
+        <tr>
+            <td>{{this.id}}</td>
+            <td>{{this.name}}</td>
+            <td>{{this.objectType}}</td>
+            <td>{{this.location}}</td>
+            <td>
+                {{#if this.isActive}}
+                <span class="badge bg-success">Aktywny</span>
+                {{else}}
+                <span class="badge bg-danger">Nieaktywny</span>
+                {{/if}}
+            </td>
+            <td>
+                <a href="/superadmin/objects/{{this.id}}" class="btn btn-sm btn-info">Zarządzaj</a>
+            </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="6" class="text-center">Nie znaleziono żadnych obiektów.</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table> 

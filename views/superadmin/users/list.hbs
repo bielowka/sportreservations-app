@@ -1,0 +1,89 @@
+{{> superadmin/header}}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/superadmin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Użytkownicy</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Lista użytkowników</h5>
+                    <a href="/superadmin/users/create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Dodaj użytkownika
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Imię i nazwisko</th>
+                                    <th>Email</th>
+                                    <th>Rola</th>
+                                    <th>Status</th>
+                                    <th>Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each users}}
+                                <tr>
+                                    <td>{{this.id}}</td>
+                                    <td>{{this.name}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>
+                                        <span class="badge {{#if (eq this.role 'superadmin')}}bg-danger{{else if (eq this.role 'admin')}}bg-warning{{else}}bg-info{{/if}}">
+                                            {{this.role}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{#if this.isActive}}bg-success{{else}}bg-danger{{/if}}">
+                                            {{#if this.isActive}}Aktywny{{else}}Nieaktywny{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="/superadmin/users/edit/{{this.id}}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteUser({{this.id}})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function deleteUser(userId) {
+    if (confirm('Czy na pewno chcesz usunąć tego użytkownika?')) {
+        fetch(`/superadmin/users/delete/${userId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Wystąpił błąd podczas usuwania użytkownika');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Wystąpił błąd podczas usuwania użytkownika');
+        });
+    }
+}
+</script> 

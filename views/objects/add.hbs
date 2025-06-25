@@ -1,0 +1,245 @@
+{{!-- Formularz dodawania obiektu sportowego --}}
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-plus-circle text-primary me-2"></i>Dodaj obiekt sportowy</h1>
+            <a href="/objects" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Powrót do listy
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Informacje o obiekcie
+                </h5>
+            </div>
+            <div class="card-body">
+                <form action="/objects/add" method="POST" id="addObjectForm">
+                    {{!-- Nazwa obiektu --}}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-tag me-1"></i>Nazwa obiektu <span class="text-danger">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control {{#if errors.name}}is-invalid{{/if}}" 
+                            id="name" 
+                            name="name" 
+                            value="{{object.name}}" 
+                            placeholder="np. Boisko piłkarskie 'Orlik'"
+                            required
+                        >
+                        {{#if errors.name}}
+                            <div class="invalid-feedback">
+                                {{errors.name}}
+                            </div>
+                        {{/if}}
+                        <div class="form-text">Podaj nazwę obiektu sportowego</div>
+                    </div>
+
+                    {{!-- Lokalizacja --}}
+                    <div class="mb-3">
+                        <label for="location" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>Lokalizacja <span class="text-danger">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control {{#if errors.location}}is-invalid{{/if}}" 
+                            id="location" 
+                            name="location" 
+                            value="{{object.location}}" 
+                            placeholder="np. ul. Sportowa 1, Warszawa"
+                            required
+                        >
+                        {{#if errors.location}}
+                            <div class="invalid-feedback">
+                                {{errors.location}}
+                            </div>
+                        {{/if}}
+                        <div class="form-text">Podaj adres lub lokalizację obiektu</div>
+                    </div>
+
+                    {{!-- Godziny otwarcia --}}
+                    <div class="mb-3">
+                        <label for="openingHours" class="form-label">
+                            <i class="fas fa-clock me-1"></i>Godziny otwarcia <span class="text-danger">*</span>
+                        </label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="openingTime" class="form-label small">Od:</label>
+                                <input 
+                                    type="time" 
+                                    class="form-control {{#if errors.openingHours}}is-invalid{{/if}}" 
+                                    id="openingTime" 
+                                    name="openingTime" 
+                                    value="{{object.openingTime}}" 
+                                    required
+                                >
+                            </div>
+                            <div class="col-md-6">
+                                <label for="closingTime" class="form-label small">Do:</label>
+                                <input 
+                                    type="time" 
+                                    class="form-control {{#if errors.openingHours}}is-invalid{{/if}}" 
+                                    id="closingTime" 
+                                    name="closingTime" 
+                                    value="{{object.closingTime}}" 
+                                    required
+                                >
+                            </div>
+                        </div>
+                        {{#if errors.openingHours}}
+                            <div class="invalid-feedback d-block">
+                                {{errors.openingHours}}
+                            </div>
+                        {{/if}}
+                        <div class="form-text">Określ godziny otwarcia obiektu</div>
+                    </div>
+
+                    {{!-- Typ obiektu --}}
+                    <div class="mb-3">
+                        <label for="objectType" class="form-label">
+                            <i class="fas fa-futbol me-1"></i>Typ obiektu <span class="text-danger">*</span>
+                        </label>
+                        <select 
+                            class="form-select {{#if errors.objectType}}is-invalid{{/if}}" 
+                            id="objectType" 
+                            name="objectType" 
+                            required
+                        >
+                            <option value="">Wybierz typ obiektu</option>
+                            <option value="football" {{#if (eq object.objectType "football")}}selected{{/if}}>
+                                <i class="fas fa-futbol"></i> Boisko piłkarskie
+                            </option>
+                            <option value="tennis" {{#if (eq object.objectType "tennis")}}selected{{/if}}>
+                                <i class="fas fa-table-tennis"></i> Kort tenisowy
+                            </option>
+                            <option value="basketball" {{#if (eq object.objectType "basketball")}}selected{{/if}}>
+                                <i class="fas fa-basketball-ball"></i> Boisko do koszykówki
+                            </option>
+                            <option value="volleyball" {{#if (eq object.objectType "volleyball")}}selected{{/if}}>
+                                <i class="fas fa-volleyball-ball"></i> Boisko do siatkówki
+                            </option>
+                            <option value="swimming" {{#if (eq object.objectType "swimming")}}selected{{/if}}>
+                                <i class="fas fa-swimming-pool"></i> Basen
+                            </option>
+                            <option value="gym" {{#if (eq object.objectType "gym")}}selected{{/if}}>
+                                <i class="fas fa-dumbbell"></i> Siłownia
+                            </option>
+                            <option value="other" {{#if (eq object.objectType "other")}}selected{{/if}}>
+                                <i class="fas fa-ellipsis-h"></i> Inny
+                            </option>
+                        </select>
+                        {{#if errors.objectType}}
+                            <div class="invalid-feedback">
+                                {{errors.objectType}}
+                            </div>
+                        {{/if}}
+                        <div class="form-text">Wybierz typ obiektu sportowego</div>
+                    </div>
+
+                    {{!-- Dodatkowe informacje --}}
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-info-circle me-1"></i>Opis obiektu
+                        </label>
+                        <textarea 
+                            class="form-control" 
+                            id="description" 
+                            name="description" 
+                            rows="3" 
+                            placeholder="Dodatkowe informacje o obiekcie (opcjonalnie)"
+                        >{{object.description}}</textarea>
+                        <div class="form-text">Możesz dodać dodatkowe informacje o obiekcie</div>
+                    </div>
+
+                    {{!-- Przyciski --}}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">
+                            <i class="fas fa-times me-1"></i>Anuluj
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Dodaj obiekt
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- Podgląd obiektu --}}
+<div class="row mt-4">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="fas fa-eye me-2"></i>Podgląd obiektu
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="objectPreview" class="text-muted">
+                    <p class="text-center">Wypełnij formularz, aby zobaczyć podgląd obiektu</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Podgląd obiektu w czasie rzeczywistym
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addObjectForm');
+    const preview = document.getElementById('objectPreview');
+    
+    function updatePreview() {
+        const formData = new FormData(form);
+        const name = formData.get('name') || '';
+        const location = formData.get('location') || '';
+        const openingTime = formData.get('openingTime') || '';
+        const closingTime = formData.get('closingTime') || '';
+        const objectType = formData.get('objectType') || '';
+        const description = formData.get('description') || '';
+        
+        if (name || location || objectType) {
+            const typeLabels = {
+                'football': 'Boisko piłkarskie',
+                'tennis': 'Kort tenisowy',
+                'basketball': 'Boisko do koszykówki',
+                'volleyball': 'Boisko do siatkówki',
+                'swimming': 'Basen',
+                'gym': 'Siłownia',
+                'other': 'Inny'
+            };
+            
+            let previewHTML = '<div class="row">';
+            previewHTML += '<div class="col-md-4"><strong>Nazwa:</strong></div><div class="col-md-8">' + (name || '-') + '</div>';
+            previewHTML += '<div class="col-md-4"><strong>Lokalizacja:</strong></div><div class="col-md-8">' + (location || '-') + '</div>';
+            previewHTML += '<div class="col-md-4"><strong>Typ obiektu:</strong></div><div class="col-md-8">' + (typeLabels[objectType] || '-') + '</div>';
+            previewHTML += '<div class="col-md-4"><strong>Godziny otwarcia:</strong></div><div class="col-md-8">' + (openingTime && closingTime ? openingTime + ' - ' + closingTime : '-') + '</div>';
+            if (description) {
+                previewHTML += '<div class="col-md-4"><strong>Opis:</strong></div><div class="col-md-8">' + description + '</div>';
+            }
+            previewHTML += '</div>';
+            
+            preview.innerHTML = previewHTML;
+        } else {
+            preview.innerHTML = '<p class="text-center">Wypełnij formularz, aby zobaczyć podgląd obiektu</p>';
+        }
+    }
+    
+    // Nasłuchiwanie zmian w formularzu
+    form.addEventListener('input', updatePreview);
+    form.addEventListener('change', updatePreview);
+    
+    // Inicjalny podgląd
+    updatePreview();
+});
+</script> 

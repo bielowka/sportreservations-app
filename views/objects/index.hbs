@@ -1,0 +1,250 @@
+{{!-- Lista obiektów sportowych --}}
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-futbol text-primary me-2"></i>Obiekty sportowe</h1>
+            <a href="/objects/add" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Dodaj obiekt
+            </a>
+        </div>
+    </div>
+</div>
+
+{{!-- Filtry i wyszukiwanie --}}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="searchInput" class="form-label">
+                            <i class="fas fa-search me-1"></i>Wyszukaj
+                        </label>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Nazwa obiektu...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="typeFilter" class="form-label">
+                            <i class="fas fa-filter me-1"></i>Typ obiektu
+                        </label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="">Wszystkie typy</option>
+                            <option value="football">Boisko piłkarskie</option>
+                            <option value="tennis">Kort tenisowy</option>
+                            <option value="basketball">Boisko do koszykówki</option>
+                            <option value="volleyball">Boisko do siatkówki</option>
+                            <option value="swimming">Basen</option>
+                            <option value="gym">Siłownia</option>
+                            <option value="other">Inny</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="locationFilter" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>Lokalizacja
+                        </label>
+                        <input type="text" class="form-control" id="locationFilter" placeholder="Miasto, ulica...">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                            <i class="fas fa-times me-1"></i>Wyczyść
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- Lista obiektów --}}
+<div class="row" id="objectsList">
+    {{#if objects.length}}
+        {{#each objects}}
+            <div class="col-lg-4 col-md-6 mb-4 object-card" 
+                 data-name="{{name}}" 
+                 data-type="{{objectType}}" 
+                 data-location="{{location}}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{name}}</h5>
+                            <span class="badge bg-primary">{{getObjectTypeLabel objectType}}</span>
+                        </div>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>{{location}}
+                        </p>
+                        <p class="card-text">
+                            <i class="fas fa-clock me-1"></i>{{openingHours}}
+                        </p>
+                        {{#if description}}
+                            <p class="card-text">{{description}}</p>
+                        {{/if}}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="/objects/{{id}}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Szczegóły
+                            </a>
+                            <a href="/reservations/new?object={{id}}" class="btn btn-sm btn-success">
+                                <i class="fas fa-calendar-plus me-1"></i>Rezerwuj
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    {{else}}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-futbol fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">Brak obiektów sportowych</h4>
+                <p class="text-muted">Nie dodano jeszcze żadnych obiektów sportowych.</p>
+                <a href="/objects/add" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Dodaj pierwszy obiekt
+                </a>
+            </div>
+        </div>
+    {{/if}}
+</div>
+
+{{!-- Przykładowe obiekty (do testowania) --}}
+<div class="row" id="sampleObjects" style="display: none;">
+    <div class="col-lg-4 col-md-6 mb-4 object-card" data-name="Boisko Orlik" data-type="football" data-location="Warszawa, ul. Sportowa 1">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Boisko Orlik</h5>
+                    <span class="badge bg-primary">Boisko piłkarskie</span>
+                </div>
+                <p class="card-text text-muted">
+                    <i class="fas fa-map-marker-alt me-1"></i>Warszawa, ul. Sportowa 1
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-clock me-1"></i>06:00 - 22:00
+                </p>
+                <p class="card-text">Sztuczna nawierzchnia, oświetlenie, szatnie</p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="/objects/1" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>Szczegóły
+                    </a>
+                    <a href="/reservations/new?object=1" class="btn btn-sm btn-success">
+                        <i class="fas fa-calendar-plus me-1"></i>Rezerwuj
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-4 object-card" data-name="Kort tenisowy Centralny" data-type="tennis" data-location="Kraków, ul. Tenisowa 5">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Kort tenisowy Centralny</h5>
+                    <span class="badge bg-primary">Kort tenisowy</span>
+                </div>
+                <p class="card-text text-muted">
+                    <i class="fas fa-map-marker-alt me-1"></i>Kraków, ul. Tenisowa 5
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-clock me-1"></i>08:00 - 20:00
+                </p>
+                <p class="card-text">Nawierzchnia ceglana, profesjonalne oświetlenie</p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="/objects/2" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>Szczegóły
+                    </a>
+                    <a href="/reservations/new?object=2" class="btn btn-sm btn-success">
+                        <i class="fas fa-calendar-plus me-1"></i>Rezerwuj
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6 mb-4 object-card" data-name="Basen Olimpijski" data-type="swimming" data-location="Gdańsk, ul. Basenowa 10">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Basen Olimpijski</h5>
+                    <span class="badge bg-primary">Basen</span>
+                </div>
+                <p class="card-text text-muted">
+                    <i class="fas fa-map-marker-alt me-1"></i>Gdańsk, ul. Basenowa 10
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-clock me-1"></i>06:00 - 23:00
+                </p>
+                <p class="card-text">50m basen, sauna, jacuzzi, siłownia</p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="/objects/3" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>Szczegóły
+                    </a>
+                    <a href="/reservations/new?object=3" class="btn btn-sm btn-success">
+                        <i class="fas fa-calendar-plus me-1"></i>Rezerwuj
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Filtrowanie i wyszukiwanie obiektów
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+    const locationFilter = document.getElementById('locationFilter');
+    const objectsList = document.getElementById('objectsList');
+    const sampleObjects = document.getElementById('sampleObjects');
+    
+    // Pokaż przykładowe obiekty jeśli lista jest pusta
+    if (objectsList.children.length === 0 || objectsList.querySelector('.object-card') === null) {
+        sampleObjects.style.display = 'block';
+    }
+    
+    function filterObjects() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedType = typeFilter.value;
+        const locationTerm = locationFilter.value.toLowerCase();
+        
+        const objectCards = document.querySelectorAll('.object-card');
+        
+        objectCards.forEach(card => {
+            const name = card.dataset.name.toLowerCase();
+            const type = card.dataset.type;
+            const location = card.dataset.location.toLowerCase();
+            
+            const matchesSearch = name.includes(searchTerm);
+            const matchesType = !selectedType || type === selectedType;
+            const matchesLocation = location.includes(locationTerm);
+            
+            if (matchesSearch && matchesType && matchesLocation) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    // Nasłuchiwanie zmian w filtrach
+    searchInput.addEventListener('input', filterObjects);
+    typeFilter.addEventListener('change', filterObjects);
+    locationFilter.addEventListener('input', filterObjects);
+});
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('locationFilter').value = '';
+    
+    // Pokaż wszystkie obiekty
+    document.querySelectorAll('.object-card').forEach(card => {
+        card.style.display = 'block';
+    });
+}
+</script> 

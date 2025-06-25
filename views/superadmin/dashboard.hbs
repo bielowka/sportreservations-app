@@ -1,0 +1,70 @@
+{{> superadmin/header}}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
+            </nav>
+
+            <div class="row">
+                <!-- Statystyki użytkowników -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Statystyki użytkowników</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rola</th>
+                                            <th>Liczba użytkowników</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each userCounts}}
+                                        <tr>
+                                            <td>
+                                                <span class="badge {{#if (eq this.role 'superadmin')}}bg-danger{{else if (eq this.role 'admin')}}bg-warning{{else}}bg-info{{/if}}">
+                                                    {{this.role}}
+                                                </span>
+                                            </td>
+                                            <td>{{this.count}}</td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Szybkie akcje -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Szybkie akcje</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="/superadmin/users" class="btn btn-primary">
+                                    <i class="fas fa-users"></i> Zarządzaj użytkownikami
+                                </a>
+                                <a href="/superadmin/users/create" class="btn btn-success">
+                                    <i class="fas fa-user-plus"></i> Dodaj nowego użytkownika
+                                </a>
+                                <a href="/superadmin/objects" class="btn btn-info">
+                                    <i class="fas fa-building"></i> Zarządzaj obiektami
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

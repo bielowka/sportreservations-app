@@ -1,0 +1,82 @@
+{{!< superadmin/layout}}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/superadmin">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Użytkownicy</li>
+                </ol>
+            </nav>
+
+            {{#if success_msg}}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>{{success_msg}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {{/if}}
+
+            {{#if error_msg}}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>{{error_msg}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {{/if}}
+
+            <div class="mb-3">
+                <a href="/superadmin/users/create" class="btn btn-primary">
+                    <i class="fas fa-user-plus me-2"></i>Dodaj użytkownika
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nazwa</th>
+                                <th>Email</th>
+                                <th>Rola</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each users}}
+                            <tr>
+                                <td>{{this.id}}</td>
+                                <td>{{this.name}}</td>
+                                <td>{{this.email}}</td>
+                                <td><span class="badge bg-secondary">{{this.role}}</span></td>
+                                <td>
+                                    <a href="/superadmin/users/{{this.id}}" class="btn btn-sm btn-info">Zarządzaj</a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function deleteUser(userId) {
+    if (confirm('Czy na pewno chcesz usunąć tego użytkownika?')) {
+        fetch(`/superadmin/users/delete/${userId}`, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Wystąpił błąd podczas usuwania użytkownika');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Wystąpił błąd podczas usuwania użytkownika');
+        });
+    }
+}
+</script> 

@@ -1,0 +1,32 @@
+{{!-- Strona błędu --}}
+
+<div class="row">
+    <div class="col-12">
+        <div class="text-center">
+            <h1 class="display-1 text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{error.status}}
+            </h1>
+            <h2 class="text-muted">{{title}}</h2>
+            <p class="lead">{{message}}</p>
+            
+            {{#if error.stack}}
+                <div class="alert alert-danger text-start">
+                    <h6>Szczegóły błędu:</h6>
+                    <pre class="mb-0"><code>{{error.stack}}</code></pre>
+                </div>
+            {{/if}}
+            
+            <div class="mt-4">
+                <a href="/" class="btn btn-primary me-2">
+                    <i class="fas fa-home me-1"></i>
+                    Strona główna
+                </a>
+                <button onclick="history.back()" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Wstecz
+                </button>
+            </div>
+        </div>
+    </div>
+</div> 
