@@ -59,40 +59,6 @@ project/
 ├── app.js           # Główny plik aplikacji
 ```
 
-### Baza danych
-System wykorzystuje relacyjną bazę danych MySQL z następującymi głównymi tabelami:
-- `users` - dane użytkowników
-- `sport_objects` - obiekty sportowe
-- `reservations` - rezerwacje
-- `schedules` - harmonogramy dostępności
-- `object_types` - typy obiektów sportowych
-
-### API Endpoints
-
-#### Autentykacja
-- `POST /api/auth/login` - logowanie
-- `POST /api/auth/register` - rejestracja
-- `POST /api/auth/logout` - wylogowanie
-
-#### Obiekty sportowe
-- `GET /api/objects` - lista obiektów
-- `POST /api/objects` - dodanie obiektu
-- `GET /api/objects/:id` - szczegóły obiektu
-- `PUT /api/objects/:id` - aktualizacja obiektu
-- `DELETE /api/objects/:id` - usunięcie obiektu
-
-#### Rezerwacje
-- `GET /api/reservations` - lista rezerwacji
-- `POST /api/reservations` - utworzenie rezerwacji
-- `GET /api/reservations/:id` - szczegóły rezerwacji
-- `PUT /api/reservations/:id` - aktualizacja rezerwacji
-- `DELETE /api/reservations/:id` - anulowanie rezerwacji
-
-#### Panel administratora
-- `GET /api/admin/users` - zarządzanie użytkownikami
-- `GET /api/admin/stats` - statystyki systemu
-- `GET /api/admin/objects` - zarządzanie obiektami
-
 ### Zabezpieczenia
 1. **Autentykacja**
    - Wykorzystanie JWT do autoryzacji API
@@ -130,7 +96,7 @@ npm run dev
 npm start
 ```
 
-### Frontend
+### Frontend - należy zbudować przed uruchomieniem aplikacji
 ```bash
 # Przejście do katalogu client
 cd client
@@ -138,8 +104,8 @@ cd client
 # Instalacja zależności
 npm install
 
-# Uruchomienie aplikacji React
-npm start
+# Utworzenie React build
+npm run build
 ```
 
 ## Autorzy
