@@ -109,8 +109,7 @@ module.exports = {
     await queryInterface.addIndex('reservations', ['status'], {
       name: 'reservations_status_idx'
     });
-    
-    // Indeks złożony dla sprawdzania konfliktów rezerwacji
+
     await queryInterface.addIndex('reservations', ['objectId', 'startTime', 'endTime'], {
       name: 'reservations_object_time_idx'
     });

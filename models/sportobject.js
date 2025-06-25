@@ -4,7 +4,6 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class SportObject extends Model {
     static associate(models) {
-      // Definicje asocjacji
       SportObject.hasMany(models.Reservation, {
         foreignKey: 'objectId',
         as: 'reservations'
@@ -88,20 +87,19 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: {}
     },
-    // Nowe pola dla harmonogramów i rezerwacji
     minReservationDuration: {
-      type: DataTypes.INTEGER, // w minutach
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 60, // 1 godzina
+      defaultValue: 60,
       validate: {
-        min: 15, // minimum 15 minut
-        max: 1440 // maksimum 24 godziny
+        min: 15,
+        max: 1440
       }
     },
     timeSlotDuration: {
-      type: DataTypes.INTEGER, // w minutach
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 60, // 1 godzina
+      defaultValue: 60,
       validate: {
         min: 15,
         max: 1440
@@ -110,7 +108,7 @@ module.exports = (sequelize, DataTypes) => {
     advanceBookingDays: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 30, // można rezerwować 30 dni w przód
+      defaultValue: 30,
       validate: {
         min: 1,
         max: 365
@@ -119,20 +117,20 @@ module.exports = (sequelize, DataTypes) => {
     cancellationHours: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 24, // można anulować do 24h przed
+      defaultValue: 24,
       validate: {
         min: 0,
-        max: 168 // 7 dni
+        max: 168
       }
     },
     useCustomSchedule: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false // domyślnie używa openingTime/closingTime
+      defaultValue: false
     },
     ownerId: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Może być null dla istniejących obiektów
+      allowNull: true,
       references: {
         model: 'users',
         key: 'id'
@@ -160,7 +158,6 @@ module.exports = (sequelize, DataTypes) => {
     ],
     hooks: {
       beforeValidate: (sportObject) => {
-        // Walidacja godzin otwarcia
         if (sportObject.openingTime && sportObject.closingTime) {
           if (sportObject.openingTime >= sportObject.closingTime) {
             throw new Error('Godzina zamknięcia musi być późniejsza niż otwarcia');

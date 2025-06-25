@@ -6,12 +6,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 
-// Endpoint logowania
 router.post('/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Walidacja wymaganych pól
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -19,7 +17,6 @@ router.post('/auth/login', async (req, res) => {
       });
     }
 
-    // Znajdź użytkownika po emailu
     const user = await User.findOne({
       where: { email: email.toLowerCase() }
     });
@@ -31,7 +28,6 @@ router.post('/auth/login', async (req, res) => {
       });
     }
 
-    // Sprawdź czy użytkownik jest aktywny
     if (!user.isActive) {
       return res.status(401).json({
         success: false,
@@ -39,7 +35,6 @@ router.post('/auth/login', async (req, res) => {
       });
     }
 
-    // Sprawdź hasło
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({
@@ -48,12 +43,10 @@ router.post('/auth/login', async (req, res) => {
       });
     }
 
-    // Aktualizuj ostatnie logowanie
     await user.update({
       lastLoginAt: new Date()
     });
 
-    // Generuj token JWT
     const token = jwt.sign(
       {
         userId: user.id,
@@ -64,7 +57,6 @@ router.post('/auth/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Zwróć dane użytkownika (bez hasła) i token
     const userData = {
       id: user.id,
       name: user.name,
@@ -93,7 +85,6 @@ router.post('/auth/login', async (req, res) => {
   }
 });
 
-// Endpoint wylogowania (opcjonalny - token jest usuwany po stronie klienta)
 router.post('/auth/logout', (req, res) => {
   res.json({
     success: true,
@@ -101,7 +92,6 @@ router.post('/auth/logout', (req, res) => {
   });
 });
 
-// Endpoint do pobierania danych zalogowanego użytkownika
 router.get('/auth/me', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -146,12 +136,10 @@ router.get('/auth/me', async (req, res) => {
   }
 });
 
-// Pobierz wszystkie obiekty sportowe
 router.get('/objects', async (req, res) => {
   try {
     const { search, type, location, page = 1, limit = 6 } = req.query;
-    
-    // Budowanie warunków wyszukiwania
+
     const where = {
       isActive: true
     };
@@ -170,11 +158,9 @@ router.get('/objects', async (req, res) => {
     if (location) {
       where.location = { [Op.like]: `%${location}%` };
     }
-    
-    // Pobierz faktyczną liczbę obiektów bez include
+
     const totalCount = await SportObject.count({ where });
-    
-    // Pobieranie obiektów z paginacją
+
     const offset = (page - 1) * limit;
     const { rows: objects } = await SportObject.findAndCountAll({
       where,
@@ -215,12 +201,10 @@ router.get('/objects', async (req, res) => {
   }
 });
 
-// Pobierz obiekty administratora
 router.get('/objects/my', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const { search, type, location, page = 1, limit = 6 } = req.query;
-    
-    // Budowanie warunków wyszukiwania
+
     const where = {
       ownerId: req.user.id,
       isActive: true
@@ -240,8 +224,7 @@ router.get('/objects/my', authenticateToken, requireRole(['admin']), async (req,
     if (location) {
       where.location = { [Op.like]: `%${location}%` };
     }
-    
-    // Pobieranie obiektów z paginacją
+
     const offset = (page - 1) * limit;
     const { count, rows: objects } = await SportObject.findAndCountAll({
       where,
@@ -282,7 +265,6 @@ router.get('/objects/my', authenticateToken, requireRole(['admin']), async (req,
   }
 });
 
-// Pobierz szczegóły obiektu
 router.get('/objects/:id', async (req, res) => {
   try {
     const objectId = parseInt(req.params.id);
@@ -318,7 +300,6 @@ router.get('/objects/:id', async (req, res) => {
       });
     }
 
-    // Sprawdź czy administrator próbuje przeglądać obiekt, który nie należy do niego
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
       try {
@@ -330,7 +311,7 @@ router.get('/objects/:id', async (req, res) => {
           });
         }
       } catch (jwtError) {
-        // Token nieprawidłowy, ale pozwalamy na dostęp (może być niezalogowany użytkownik)
+        // Token nieprawidłowy, ale może być niezalogowany user
       }
     }
 
@@ -349,7 +330,6 @@ router.get('/objects/:id', async (req, res) => {
   }
 });
 
-// Pobierz harmonogram obiektu
 router.get('/objects/:id/schedule', async (req, res) => {
   try {
     const objectId = parseInt(req.params.id);
@@ -363,7 +343,6 @@ router.get('/objects/:id/schedule', async (req, res) => {
       return res.status(404).json({ error: 'Obiekt nie został znaleziony' });
     }
 
-    // Sprawdź czy administrator próbuje przeglądać obiekt, który nie należy do niego
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
       try {
@@ -375,20 +354,18 @@ router.get('/objects/:id/schedule', async (req, res) => {
           });
         }
       } catch (jwtError) {
-        // Token nieprawidłowy, ale pozwalamy na dostęp (może być niezalogowany użytkownik)
+        // Token nieprawidłowy, ale może być niezalogowany user
       }
     }
 
     let schedules = [];
     
     if (object.useCustomSchedule) {
-      // Pobierz niestandardowy harmonogram tygodniowy
       schedules = await ObjectSchedule.findAll({
         where: { objectId },
         order: [['dayOfWeek', 'ASC']]
       });
     } else {
-      // Użyj domyślnych godzin otwarcia dla wszystkich dni
       const daysOfWeek = [0, 1, 2, 3, 4, 5, 6]; // niedziela = 0, sobota = 6
       schedules = daysOfWeek.map(day => ({
         dayOfWeek: day,
@@ -401,7 +378,6 @@ router.get('/objects/:id/schedule', async (req, res) => {
       }));
     }
 
-    // Dodaj informacje o konfiguracji obiektu
     const scheduleConfig = {
       objectId: object.id,
       objectName: object.name,
@@ -420,17 +396,14 @@ router.get('/objects/:id/schedule', async (req, res) => {
   }
 });
 
-// Dodaj nowy obiekt sportowy
 router.post('/objects', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const { name, location, openingTime, closingTime, objectType, description, pricePerHour, maxCapacity } = req.body;
 
-    // Walidacja wymaganych pól
     if (!name || !location || !openingTime || !closingTime || !objectType) {
       return res.status(400).json({ error: 'Wszystkie wymagane pola muszą być wypełnione' });
     }
 
-    // Sprawdź czy obiekt o tej nazwie już istnieje
     const existingObject = await SportObject.findOne({ where: { name } });
     if (existingObject) {
       return res.status(400).json({ error: 'Obiekt o tej nazwie już istnieje' });
@@ -445,7 +418,7 @@ router.post('/objects', authenticateToken, requireRole(['admin']), async (req, r
       description,
       pricePerHour: pricePerHour || 0,
       maxCapacity: maxCapacity || 1,
-      ownerId: req.user.id // Przypisz obiekt do zalogowanego administratora
+      ownerId: req.user.id
     });
 
     res.status(201).json({
@@ -463,10 +436,9 @@ router.post('/objects', authenticateToken, requireRole(['admin']), async (req, r
   }
 });
 
-// Pobierz wszystkie rezerwacje
 router.get('/reservations', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id; // ID zalogowanego użytkownika
+    const userId = req.user.id;
 
     const reservations = await Reservation.findAll({
       where: {
@@ -502,13 +474,11 @@ router.get('/reservations', authenticateToken, async (req, res) => {
   }
 });
 
-// Utwórz nową rezerwację
 router.post('/reservations', authenticateToken, async (req, res) => {
   try {
     const { objectId, date, time, duration, notes } = req.body;
-    const userId = req.user.id; // ID zalogowanego użytkownika
+    const userId = req.user.id;
 
-    // Walidacja wymaganych pól
     if (!objectId || !date || !time) {
       return res.status(400).json({ 
         success: false,
@@ -516,7 +486,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy obiekt istnieje
     const object = await SportObject.findByPk(objectId);
     if (!object) {
       return res.status(404).json({ 
@@ -525,7 +494,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy użytkownik istnieje
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ 
@@ -534,7 +502,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy data jest w przyszłości
     const selectedDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -546,7 +513,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy data nie przekracza advanceBookingDays
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + object.advanceBookingDays);
     
@@ -557,7 +523,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Pobierz harmonogram dla tego dnia
     const dayOfWeek = selectedDate.getDay();
     let schedule;
     
@@ -582,7 +547,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy czas jest w godzinach otwarcia
     const timeString = time.slice(0, 5);
     if (timeString < schedule.openingTime.slice(0, 5) || timeString >= schedule.closingTime.slice(0, 5)) {
       return res.status(400).json({
@@ -591,7 +555,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy to nie jest przerwa
     if (schedule.breakStartTime && schedule.breakEndTime &&
         timeString >= schedule.breakStartTime.slice(0, 5) && 
         timeString < schedule.breakEndTime.slice(0, 5)) {
@@ -601,11 +564,9 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Oblicz czas rozpoczęcia i zakończenia
     const startTime = new Date(`${date}T${timeString}:00`);
     const endTime = new Date(startTime.getTime() + (duration || object.timeSlotDuration) * 60000);
 
-    // Sprawdź czy nie przekracza godzin zamknięcia
     const closingTime = new Date(`${date}T${schedule.closingTime}`);
     if (endTime > closingTime) {
       return res.status(400).json({
@@ -614,7 +575,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy termin nie koliduje z istniejącymi rezerwacjami
     const conflictingReservation = await Reservation.findOne({
       where: {
         objectId,
@@ -631,11 +591,9 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Oblicz cenę
     const durationHours = (duration || object.timeSlotDuration) / 60;
     const totalPrice = parseFloat(object.pricePerHour) * durationHours;
 
-    // Utwórz rezerwację
     const newReservation = await Reservation.create({
       objectId,
       userId,
@@ -646,7 +604,6 @@ router.post('/reservations', authenticateToken, async (req, res) => {
       status: 'confirmed'
     });
 
-    // Pobierz utworzoną rezerwację z danymi obiektu i użytkownika
     const createdReservation = await Reservation.findByPk(newReservation.id, {
       include: [
         {
@@ -678,11 +635,10 @@ router.post('/reservations', authenticateToken, async (req, res) => {
   }
 });
 
-// Pobierz dostępne sloty czasowe dla obiektu w konkretnym dniu
 router.get('/objects/:id/availability/:date', async (req, res) => {
   try {
     const objectId = parseInt(req.params.id);
-    const date = req.params.date; // format: YYYY-MM-DD
+    const date = req.params.date;
     
     if (isNaN(objectId)) {
       return res.status(400).json({ 
@@ -691,7 +647,6 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
       });
     }
 
-    // Sprawdź czy obiekt istnieje
     const object = await SportObject.findByPk(objectId);
     if (!object) {
       return res.status(404).json({ 
@@ -700,7 +655,6 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
       });
     }
 
-    // Sprawdź czy administrator próbuje przeglądać obiekt, który nie należy do niego
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
       try {
@@ -712,11 +666,10 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
           });
         }
       } catch (jwtError) {
-        // Token nieprawidłowy, ale pozwalamy na dostęp (może być niezalogowany użytkownik)
+        // Token nieprawidłowy, ale może być niezalogowany user
       }
     }
 
-    // Sprawdź czy data jest w przyszłości
     const selectedDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -728,7 +681,6 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
       });
     }
 
-    // Sprawdź czy data nie przekracza advanceBookingDays
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + object.advanceBookingDays);
     
@@ -739,8 +691,7 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
       });
     }
 
-    // Pobierz harmonogram dla tego dnia tygodnia
-    const dayOfWeek = selectedDate.getDay(); // 0 = niedziela, 1 = poniedziałek, etc.
+    const dayOfWeek = selectedDate.getDay();
     let schedule;
     
     if (object.useCustomSchedule) {
@@ -748,7 +699,6 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
         where: { objectId, dayOfWeek }
       });
     } else {
-      // Użyj domyślnych godzin otwarcia
       schedule = {
         isOpen: true,
         openingTime: object.openingTime,
@@ -770,16 +720,13 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
       });
     }
 
-    // Generuj sloty czasowe na podstawie timeSlotDuration
     const timeSlots = [];
     const startTime = new Date(`2000-01-01T${schedule.openingTime}`);
     const endTime = new Date(`2000-01-01T${schedule.closingTime}`);
     const slotDuration = object.timeSlotDuration; // w minutach
 
-    // Sprawdź czy to dzisiejszy dzień
     const isToday = selectedDate.toDateString() === today.toDateString();
-    
-    // Pobierz aktualny czas w lokalnej strefie czasowej
+
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
@@ -789,13 +736,11 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
     while (currentTime < endTime) {
       const timeString = currentTime.toTimeString().slice(0, 5);
       const [slotHour, slotMinute] = timeString.split(':').map(Number);
-      
-      // Sprawdź czy to nie jest przerwa
+
       const isBreak = schedule.breakStartTime && schedule.breakEndTime &&
         timeString >= schedule.breakStartTime.slice(0, 5) && 
         timeString < schedule.breakEndTime.slice(0, 5);
 
-      // Sprawdź czy slot nie jest w przeszłości (dla dzisiejszego dnia)
       const isPast = isToday && (
         slotHour < currentHour || 
         (slotHour === currentHour && slotMinute < currentMinute)
@@ -811,11 +756,9 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
         reservedBy: null
       });
 
-      // Przejdź do następnego slotu
       currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
     }
 
-    // Pobierz istniejące rezerwacje dla tego dnia
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(date);
@@ -838,12 +781,10 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
       ]
     });
 
-    // Oznacz zajęte sloty
     reservations.forEach(reservation => {
       const reservationStart = new Date(reservation.startTime);
       const reservationEnd = new Date(reservation.endTime);
-      
-      // Konwertuj czasy rezerwacji na lokalne godziny
+
       const reservationStartHour = reservationStart.getHours();
       const reservationStartMinute = reservationStart.getMinutes();
       const reservationEndHour = reservationEnd.getHours();
@@ -856,8 +797,7 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
         
         const reservationStartMinutes = reservationStartHour * 60 + reservationStartMinute;
         const reservationEndMinutes = reservationEndHour * 60 + reservationEndMinute;
-        
-        // Sprawdź czy slot koliduje z rezerwacją
+
         if (slotStartMinutes < reservationEndMinutes && slotEndMinutes > reservationStartMinutes) {
           slot.isReserved = true;
           slot.isAvailable = false;
@@ -893,7 +833,6 @@ router.get('/objects/:id/availability/:date', async (req, res) => {
   }
 });
 
-// Pobierz listę użytkowników (tylko dla administratorów)
 router.get('/users', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const users = await User.findAll({
@@ -916,13 +855,11 @@ router.get('/users', authenticateToken, requireRole(['admin']), async (req, res)
   }
 });
 
-// Anuluj rezerwację
 router.delete('/reservations/:id', authenticateToken, async (req, res) => {
   try {
     const reservationId = parseInt(req.params.id);
     const userId = req.user.id;
 
-    // Znajdź rezerwację
     const reservation = await Reservation.findOne({
       where: {
         id: reservationId,
@@ -946,12 +883,10 @@ router.delete('/reservations/:id', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź czy można anulować (np. czy nie jest za późno)
     const now = new Date();
     const reservationStart = new Date(reservation.startTime);
     const hoursUntilReservation = (reservationStart.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-    // Sprawdź czy rezerwacja nie jest w przeszłości
     if (reservationStart < now) {
       return res.status(400).json({
         success: false,
@@ -959,7 +894,6 @@ router.delete('/reservations/:id', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sprawdź minimalny czas do anulowania (z obiektu sportowego)
     if (reservation.object && hoursUntilReservation < reservation.object.cancellationHours) {
       return res.status(400).json({
         success: false,
@@ -967,7 +901,6 @@ router.delete('/reservations/:id', authenticateToken, async (req, res) => {
       });
     }
 
-    // Anuluj rezerwację
     await reservation.update({
       status: 'cancelled',
       cancelledAt: now,
@@ -988,14 +921,12 @@ router.delete('/reservations/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Anuluj rezerwację jako administrator
 router.delete('/objects/:objectId/reservations/:reservationId', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const objectId = parseInt(req.params.objectId);
     const reservationId = parseInt(req.params.reservationId);
     const adminId = req.user.id;
 
-    // Znajdź obiekt i sprawdź czy należy do administratora
     const object = await SportObject.findOne({
       where: {
         id: objectId,
@@ -1010,7 +941,6 @@ router.delete('/objects/:objectId/reservations/:reservationId', authenticateToke
       });
     }
 
-    // Znajdź rezerwację
     const reservation = await Reservation.findOne({
       where: {
         id: reservationId,
@@ -1028,7 +958,6 @@ router.delete('/objects/:objectId/reservations/:reservationId', authenticateToke
       });
     }
 
-    // Anuluj rezerwację
     await reservation.update({
       status: 'cancelled',
       cancelledAt: new Date(),
@@ -1050,13 +979,11 @@ router.delete('/objects/:objectId/reservations/:reservationId', authenticateToke
   }
 });
 
-// Aktualizuj obiekt
 router.put('/objects/:id', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const objectId = parseInt(req.params.id);
     const adminId = req.user.id;
 
-    // Znajdź obiekt i sprawdź czy należy do administratora
     const object = await SportObject.findOne({
       where: {
         id: objectId,
@@ -1071,7 +998,6 @@ router.put('/objects/:id', authenticateToken, requireRole(['admin']), async (req
       });
     }
 
-    // Walidacja wymaganych pól
     const requiredFields = ['name', 'location', 'objectType', 'openingTime', 'closingTime'];
     const missingFields = requiredFields.filter(field => !req.body[field]);
     
@@ -1082,7 +1008,6 @@ router.put('/objects/:id', authenticateToken, requireRole(['admin']), async (req
       });
     }
 
-    // Walidacja pól numerycznych
     if (req.body.pricePerHour && req.body.pricePerHour < 0) {
       return res.status(400).json({
         success: false,
@@ -1097,7 +1022,6 @@ router.put('/objects/:id', authenticateToken, requireRole(['admin']), async (req
       });
     }
 
-    // Aktualizuj obiekt
     await object.update({
       name: req.body.name,
       location: req.body.location,
@@ -1109,7 +1033,6 @@ router.put('/objects/:id', authenticateToken, requireRole(['admin']), async (req
       maxCapacity: parseInt(req.body.maxCapacity) || 1
     });
 
-    // Pobierz zaktualizowany obiekt z relacjami
     const updatedObject = await SportObject.findByPk(objectId, {
       include: [
         {

@@ -5,10 +5,8 @@ const bcrypt = require('bcrypt');
 module.exports = {
   async up(queryInterface, Sequelize) {
     const hashedPassword = await bcrypt.hash('password123', 10);
-    
-    // Use transaction to ensure data consistency
+
     return queryInterface.sequelize.transaction(async (t) => {
-      // First create users
       const users = await queryInterface.bulkInsert('users', [
         {
           name: 'Jan Kowalski',
@@ -39,7 +37,6 @@ module.exports = {
         }
       ], { transaction: t, returning: true });
 
-      // Then create sport objects
       const objects = await queryInterface.bulkInsert('sport_objects', [
         {
           name: 'Boisko Orlik',
@@ -140,7 +137,6 @@ module.exports = {
         }
       ], { transaction: t, returning: true });
 
-      // Get the IDs of created records
       const [user1Id, user2Id] = await queryInterface.sequelize.query(
         'SELECT id FROM users WHERE email IN (:emails) ORDER BY email',
         {
@@ -159,7 +155,6 @@ module.exports = {
         }
       );
 
-      // Finally create reservations
       await queryInterface.bulkInsert('reservations', [
         {
           userId: user1Id.id,
@@ -188,7 +183,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    // Remove all seeded data in reverse order
     await queryInterface.bulkDelete('reservations', null, {});
     await queryInterface.bulkDelete('sport_objects', null, {});
     await queryInterface.bulkDelete('users', {

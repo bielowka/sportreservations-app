@@ -2,15 +2,12 @@ const express = require('express');
 const { Op } = require('sequelize');
 const router = express.Router();
 
-// Import modeli
 const { SportObject, User, Reservation } = require('../models');
 
-// GET /api/objects - Lista obiektów sportowych
 router.get('/', async (req, res) => {
     try {
         const { search, type, location, page = 1, limit = 6 } = req.query;
-        
-        // Budowanie warunków wyszukiwania
+
         const where = {
             isActive: true
         };
@@ -29,8 +26,7 @@ router.get('/', async (req, res) => {
         if (location) {
             where.location = { [Op.like]: `%${location}%` };
         }
-        
-        // Pobieranie obiektów z paginacją
+
         const offset = (page - 1) * limit;
         const { count, rows: objects } = await SportObject.findAndCountAll({
             where,
@@ -71,7 +67,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/objects/:id - Szczegóły obiektu
 router.get('/:id', async (req, res) => {
     try {
         const objectId = parseInt(req.params.id);
@@ -116,12 +111,10 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST /api/objects - Dodaj nowy obiekt
 router.post('/', async (req, res) => {
     try {
         const { name, location, openingTime, closingTime, objectType, description, pricePerHour, maxCapacity, facilities } = req.body;
-        
-        // Walidacja danych
+
         const errors = {};
         
         if (!name || name.trim().length === 0) {
@@ -147,8 +140,7 @@ router.post('/', async (req, res) => {
         if (openingTime && closingTime && openingTime >= closingTime) {
             errors.closingTime = 'Godzina zamknięcia musi być późniejsza niż otwarcia';
         }
-        
-        // Jeśli są błędy, zwróć błąd walidacji
+
         if (Object.keys(errors).length > 0) {
             return res.status(400).json({
                 success: false,
@@ -156,8 +148,7 @@ router.post('/', async (req, res) => {
                 errors: errors
             });
         }
-        
-        // Tworzenie nowego obiektu
+
         const newObject = await SportObject.create({
             name: name.trim(),
             location: location.trim(),
@@ -180,8 +171,7 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating object:', error);
-        
-        // Obsługa błędów walidacji Sequelize
+
         if (error.name === 'SequelizeValidationError') {
             const errors = {};
             error.errors.forEach(err => {
@@ -203,7 +193,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/objects/:id - Aktualizuj obiekt
 router.put('/:id', async (req, res) => {
     try {
         const objectId = parseInt(req.params.id);
@@ -218,8 +207,7 @@ router.put('/:id', async (req, res) => {
                 message: 'Obiekt sportowy nie został znaleziony'
             });
         }
-        
-        // Aktualizacja obiektu
+
         await object.update(updateData);
         
         res.json({
@@ -251,7 +239,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/objects/:id - Usuń obiekt (soft delete)
 router.delete('/:id', async (req, res) => {
     try {
         const objectId = parseInt(req.params.id);
@@ -265,8 +252,7 @@ router.delete('/:id', async (req, res) => {
                 message: 'Obiekt sportowy nie został znaleziony'
             });
         }
-        
-        // Sprawdź czy obiekt ma aktywne rezerwacje
+
         const activeReservations = await Reservation.count({
             where: {
                 objectId: objectId,
@@ -284,8 +270,7 @@ router.delete('/:id', async (req, res) => {
                 message: 'Nie można usunąć obiektu z aktywnymi rezerwacjami'
             });
         }
-        
-        // Soft delete - ustaw isActive na false
+
         await object.update({ isActive: false });
         
         console.log('Deleting object with ID:', objectId);

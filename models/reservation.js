@@ -4,7 +4,6 @@ const { Model, Op } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Reservation extends Model {
     static associate(models) {
-      // Definicje asocjacji
       Reservation.belongsTo(models.User, {
         foreignKey: 'userId',
         as: 'user'
@@ -120,20 +119,17 @@ module.exports = (sequelize, DataTypes) => {
     ],
     hooks: {
       beforeValidate: (reservation) => {
-        // Walidacja czasów rezerwacji
         if (reservation.startTime && reservation.endTime) {
           if (reservation.startTime >= reservation.endTime) {
             throw new Error('Czas zakończenia musi być późniejszy niż rozpoczęcia');
           }
-          
-          // Sprawdź czy rezerwacja nie jest w przeszłości
+
           if (reservation.startTime < new Date()) {
             throw new Error('Nie można rezerwować terminów w przeszłości');
           }
         }
       },
       beforeCreate: async (reservation) => {
-        // Sprawdź konflikty rezerwacji
         const conflictingReservation = await sequelize.models.Reservation.findOne({
           where: {
             objectId: reservation.objectId,

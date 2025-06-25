@@ -62,7 +62,6 @@ module.exports = {
       }
     });
 
-    // Dodanie indeksów
     await queryInterface.addIndex('object_schedules', ['objectId'], {
       name: 'object_schedules_object_id_idx'
     });

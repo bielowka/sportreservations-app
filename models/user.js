@@ -4,13 +4,11 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // Definicje asocjacji
       User.hasMany(models.Reservation, {
         foreignKey: 'userId',
         as: 'reservations'
       });
-      
-      // Administrator może mieć wiele obiektów sportowych
+
       User.hasMany(models.SportObject, {
         foreignKey: 'ownerId',
         as: 'ownedObjects'

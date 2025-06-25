@@ -3,20 +3,17 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
 
-// Login page
 router.get('/login', (req, res) => {
     res.render('auth/login', { 
         title: 'Logowanie',
-        layout: 'auth' // użyj specjalnego layoutu dla stron autoryzacji
+        layout: 'auth'
     });
 });
 
-// Handle login
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Znajdź użytkownika
         const user = await User.findOne({ where: { email } });
 
         if (!user || !user.isActive) {
@@ -24,7 +21,6 @@ router.post('/login', async (req, res) => {
             return res.redirect('/login');
         }
 
-        // Sprawdź hasło
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -32,11 +28,9 @@ router.post('/login', async (req, res) => {
             return res.redirect('/login');
         }
 
-        // Ustaw sesję
         req.session.userId = user.id;
         req.session.userRole = user.role;
 
-        // Przekieruj w zależności od roli
         if (user.role === 'superadmin') {
             res.redirect('/superadmin/dashboard');
         } else if (user.role === 'admin') {
@@ -51,7 +45,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Logout
 router.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/login');

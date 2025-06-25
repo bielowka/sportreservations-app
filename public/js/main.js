@@ -1,9 +1,6 @@
-// Main JavaScript file for Sport Reservations
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Sport Reservations app loaded successfully!');
-    
-    // Auto-hide alerts after 5 seconds
+
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -18,8 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 5000);
     });
-    
-    // Add loading state to buttons
+
     const buttons = document.querySelectorAll('.btn');
     buttons.forEach(button => {
         button.addEventListener('click', function() {
@@ -27,8 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.disabled = true;
                 const originalText = this.innerHTML;
                 this.innerHTML = '<span class="loading"></span> Ładowanie...';
-                
-                // Re-enable after 3 seconds if still disabled
+
                 setTimeout(() => {
                     if (this.disabled) {
                         this.disabled = false;
@@ -38,8 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // Smooth scrolling for anchor links
+
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
     anchorLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -53,8 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // Form validation helper
+
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
@@ -78,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Utility function to show alerts
 function showAlert(message, type = 'info') {
     const alertContainer = document.createElement('div');
     alertContainer.className = `alert alert-${type} alert-dismissible fade show`;
@@ -90,8 +82,7 @@ function showAlert(message, type = 'info') {
     const main = document.querySelector('main');
     if (main) {
         main.insertBefore(alertContainer, main.firstChild);
-        
-        // Auto-hide after 5 seconds
+
         setTimeout(() => {
             if (alertContainer.parentNode) {
                 alertContainer.style.transition = 'opacity 0.5s ease-out';
@@ -106,7 +97,6 @@ function showAlert(message, type = 'info') {
     }
 }
 
-// API helper functions
 const API = {
     async get(url) {
         try {
@@ -163,7 +153,6 @@ const API = {
     }
 };
 
-// Export for use in other scripts
 window.SportReservations = {
     showAlert,
     API

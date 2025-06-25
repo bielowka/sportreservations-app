@@ -82,7 +82,6 @@ module.exports = {
       }
     });
 
-    // Dodanie indeksów
     await queryInterface.addIndex('sport_objects', ['objectType'], {
       name: 'sport_objects_object_type_idx'
     });

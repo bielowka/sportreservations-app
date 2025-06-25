@@ -4,7 +4,6 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (t) => {
-      // First, get the IDs of the objects we want to create schedules for
       const objects = await queryInterface.sequelize.query(
         'SELECT id, name FROM sport_objects WHERE name IN (:names)',
         {
@@ -21,13 +20,11 @@ module.exports = {
         }
       );
 
-      // Create a map of object names to their IDs
       const objectMap = objects.reduce((acc, obj) => {
         acc[obj.name] = obj.id;
         return acc;
       }, {});
 
-      // Update useCustomSchedule for these objects
       await queryInterface.bulkUpdate(
         'sport_objects',
         { useCustomSchedule: true },
@@ -35,10 +32,8 @@ module.exports = {
         { transaction: t }
       );
 
-      // Create schedules for each object
       const schedules = [];
 
-      // Boisko Orlik schedules
       if (objectMap['Boisko Orlik']) {
         for (let day = 0; day <= 6; day++) {
           schedules.push({
@@ -55,7 +50,6 @@ module.exports = {
         }
       }
 
-      // Kort tenisowy schedules
       if (objectMap['Kort tenisowy Centralny']) {
         for (let day = 0; day <= 6; day++) {
           schedules.push({
@@ -74,7 +68,6 @@ module.exports = {
         }
       }
 
-      // Basen Olimpijski schedules
       if (objectMap['Basen Olimpijski']) {
         const daysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
         for (let day = 0; day <= 6; day++) {
@@ -91,7 +84,6 @@ module.exports = {
         }
       }
 
-      // Siłownia schedules
       if (objectMap['Siłownia Fitness Pro']) {
         const daysOfWeek = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
         for (let day = 0; day <= 6; day++) {
@@ -108,13 +100,11 @@ module.exports = {
         }
       }
 
-      // Insert all schedules
       await queryInterface.bulkInsert('object_schedules', schedules, { transaction: t });
     });
   },
 
   async down(queryInterface, Sequelize) {
-    // Delete all schedules and reset useCustomSchedule
     await queryInterface.bulkDelete('object_schedules', null, {});
     await queryInterface.bulkUpdate(
       'sport_objects',

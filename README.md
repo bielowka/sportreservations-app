@@ -32,28 +32,38 @@ System rezerwacji obiektów sportowych umożliwiający zarządzanie obiektami sp
 - Tworzenie i zarządzanie własnymi rezerwacjami
 - Przeglądanie historii rezerwacji
 - Edycja własnego profilu
+- 
+- login: jan.kowalski@example.com
+- hasło: password123
 
 ### 2. Administrator Obiektu (Admin)
 - Dodawanie i edycja własnych obiektów sportowych
 - Zarządzanie rezerwacjami dla swoich obiektów
 - Przeglądanie statystyk obiektów
+- 
+- login: admin@sportreservations.com
+- hasło: password123
 
 ### 3. Super Administrator (Superadmin)
 - Osobny panel, poza głównym frontendem z osobnym logowaniem
 - Zarządzanie wszystkimi obiektami w systemie
 - Zarządzanie kontami użytkowników
 - Przeglądanie globalnych statystyk systemu
+- 
+- localhost:3000/superadmin
+- login: superadmin@sportreservations.com
+- hasło: superadmin123
 
 ## Dokumentacja techniczna
 
 ### Struktura projektu
 ```
 project/
-├── client/           # Aplikacja kliencka w React
-├── config/           # Konfiguracja
-├── middleware/       # Auth middleware
+├── client/          # Aplikacja kliencka w React
+├── config/          # Konfiguracja
+├── middleware/      # Auth middleware
 ├── models/          # Modele Sequelize
-├── migrations/       # Migracje bazy danych
+├── migrations/      # Migracje bazy danych
 ├── routes/          # Routery Express
 ├── views/           # Szablony HBS panelu superadmina
 ├── app.js           # Główny plik aplikacji

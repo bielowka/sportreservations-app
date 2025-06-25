@@ -19,7 +19,6 @@ hbs.registerHelper('eq', function(a, b) {
     return a === b;
 });
 
-// Middleware do sprawdzania sesji super admina
 const requireSuperAdmin = (req, res, next) => {
     if (req.session && req.session.isSuperAdmin) {
         next();
@@ -28,7 +27,6 @@ const requireSuperAdmin = (req, res, next) => {
     }
 };
 
-// Middleware do przekierowania zalogowanych super adminów z logowania
 const redirectIfAuthenticated = (req, res, next) => {
     if (req.session && req.session.isSuperAdmin) {
         res.redirect('/superadmin');
@@ -37,20 +35,17 @@ const redirectIfAuthenticated = (req, res, next) => {
     }
 };
 
-// Login page
 router.get('/login', redirectIfAuthenticated, (req, res) => {
     res.render('superadmin/login', { 
         title: 'Logowanie do Panelu Super Admina',
-        layout: false // Nie używaj głównego layoutu
+        layout: false // Nie używaj głównego layoutu!
     });
 });
 
-// Handle login
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Znajdź użytkownika
         const user = await User.findOne({ where: { email, role: 'superadmin' } });
 
         if (!user) {
@@ -61,7 +56,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Sprawdź hasło
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -72,7 +66,6 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Ustaw sesję
         req.session.isSuperAdmin = true;
         req.session.superAdminId = user.id;
         req.session.superAdminName = user.name;
@@ -88,20 +81,16 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Logout
 router.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/superadmin/login');
     });
 });
 
-// Zastosuj middleware do wszystkich pozostałych ścieżek
 router.use(requireSuperAdmin);
 
-// Main superadmin dashboard
 router.get('/', async (req, res) => {
     try {
-        // Pobierz statystyki
         const usersCount = await User.count();
         const objectsCount = await SportObject.count();
         const reservationsCount = await Reservation.count();
@@ -123,9 +112,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// --- User Management ---
-
-// User list
 router.get('/users', async (req, res) => {
     try {
         const users = await User.findAll({ order: [['id', 'ASC']] });
@@ -139,7 +125,6 @@ router.get('/users', async (req, res) => {
     }
 });
 
-// Show user creation form - must be BEFORE /users/:id route
 router.get('/users/create', requireSuperAdmin, (req, res) => {
     res.render('superadmin/users/create', {
         title: 'Dodaj nowego użytkownika',
@@ -147,12 +132,10 @@ router.get('/users/create', requireSuperAdmin, (req, res) => {
     });
 });
 
-// Handle user creation - must be BEFORE /users/:id route
 router.post('/users/create', requireSuperAdmin, async (req, res) => {
     try {
         const { name, email, password, role, isActive } = req.body;
 
-        // Sprawdź, czy użytkownik o takim emailu już istnieje
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.render('superadmin/users/create', {
@@ -163,10 +146,8 @@ router.post('/users/create', requireSuperAdmin, async (req, res) => {
             });
         }
 
-        // Hash hasła
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Utwórz nowego użytkownika
         await User.create({
             name,
             email,
@@ -188,7 +169,6 @@ router.post('/users/create', requireSuperAdmin, async (req, res) => {
     }
 });
 
-// User details page - must be AFTER specific routes like /users/create
 router.get('/users/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -206,7 +186,6 @@ router.get('/users/:id', async (req, res) => {
     }
 });
 
-// Handle user edit
 router.post('/users/edit/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -226,7 +205,6 @@ router.post('/users/edit/:id', async (req, res) => {
     }
 });
 
-// Handle user delete
 router.post('/users/delete/:id', async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -242,9 +220,7 @@ router.post('/users/delete/:id', async (req, res) => {
     }
 });
 
-// --- Object Management ---
 
-// Object list
 router.get('/objects', async (req, res) => {
     try {
         const objects = await SportObject.findAll({ order: [['id', 'ASC']] });
@@ -258,7 +234,6 @@ router.get('/objects', async (req, res) => {
     }
 });
 
-// Object details page
 router.get('/objects/:id', async (req, res) => {
     try {
         const object = await SportObject.findByPk(req.params.id);
@@ -276,12 +251,10 @@ router.get('/objects/:id', async (req, res) => {
     }
 });
 
-// Handle object edit
 router.post('/objects/edit/:id', async (req, res) => {
     try {
         const object = await SportObject.findByPk(req.params.id);
         if (object) {
-            // Validate required fields
             const requiredFields = ['name', 'location', 'objectType', 'openingTime', 'closingTime', 'pricePerHour', 'maxCapacity'];
             const missingFields = requiredFields.filter(field => !req.body[field]);
             
@@ -293,7 +266,6 @@ router.post('/objects/edit/:id', async (req, res) => {
                 });
             }
 
-            // Validate numeric fields
             if (isNaN(req.body.pricePerHour) || req.body.pricePerHour < 0) {
                 return res.render('superadmin/object', {
                     title: 'Szczegóły Obiektu',
@@ -310,7 +282,6 @@ router.post('/objects/edit/:id', async (req, res) => {
                 });
             }
 
-            // Update object with all fields
             await object.update({
                 name: req.body.name,
                 location: req.body.location,
@@ -323,7 +294,6 @@ router.post('/objects/edit/:id', async (req, res) => {
                 isActive: req.body.isActive === 'on'
             });
 
-            // Redirect with success message
             return res.render('superadmin/object', {
                 title: 'Szczegóły Obiektu',
                 object: object.toJSON(),
@@ -346,7 +316,6 @@ router.post('/objects/edit/:id', async (req, res) => {
     }
 });
 
-// Handle object delete
 router.post('/objects/delete/:id', async (req, res) => {
     try {
         const object = await SportObject.findByPk(req.params.id);
