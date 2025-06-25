@@ -66,7 +66,7 @@ const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ objectId }) => {
 
   const formatTime = (time: string | null): string => {
     if (!time) return '-';
-    return time.substring(0, 5); // Usuń sekundy
+    return time.substring(0, 5);
   };
 
   const getStatusBadge = (isOpen: boolean) => {

@@ -15,7 +15,6 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Generuj daty na następne 30 dni
   const generateAvailableDates = () => {
     const dates: Date[] = [];
     const today = new Date();

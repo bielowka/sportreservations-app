@@ -15,7 +15,7 @@ interface TimeSlotTableProps {
   objectId: number;
   selectedDate: Date | null;
   onTimeSlotSelect: (timeSlot: TimeSlot) => void;
-  timeSlotDuration?: number; // w minutach, domyślnie 60
+  timeSlotDuration?: number;
   onReservationCreated?: () => void;
 }
 
@@ -31,14 +31,12 @@ const TimeSlotTable: React.FC<TimeSlotTableProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Efekt do odświeżania danych po utworzeniu rezerwacji
   useEffect(() => {
     if (onReservationCreated) {
       setRefreshTrigger(prev => prev + 1);
     }
   }, [onReservationCreated]);
 
-  // Generuj sloty czasowe na podstawie timeSlotDuration
   const generateTimeSlots = (): TimeSlot[] => {
     const slots: TimeSlot[] = [];
     const startHour = 7;
@@ -46,7 +44,7 @@ const TimeSlotTable: React.FC<TimeSlotTableProps> = ({
     
     for (let hour = startHour; hour <= endHour; hour++) {
       for (let minute = 0; minute < 60; minute += timeSlotDuration) {
-        if (hour === endHour && minute > 0) break; // Nie przekraczaj godziny końcowej
+        if (hour === endHour && minute > 0) break;
         
         const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         slots.push({
@@ -73,7 +71,6 @@ const TimeSlotTable: React.FC<TimeSlotTableProps> = ({
       setError(null);
       
       try {
-        // Formatuj datę do formatu YYYY-MM-DD
         const dateString = selectedDate.toISOString().split('T')[0];
         
         const response = await fetch(`/api/objects/${objectId}/availability/${dateString}`);

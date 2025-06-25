@@ -56,7 +56,6 @@ const ReservationsPage: React.FC = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Odśwież listę rezerwacji
         const updatedReservations = reservations.map(res => 
           res.id === reservationId 
             ? { 
@@ -67,7 +66,7 @@ const ReservationsPage: React.FC = () => {
             : res
         );
         setReservations(updatedReservations);
-        setError(null); // Wyczyść poprzednie błędy
+        setError(null);
       } else {
         setError(data.error || 'Nie udało się anulować rezerwacji');
       }

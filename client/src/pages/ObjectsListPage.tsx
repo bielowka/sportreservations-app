@@ -326,7 +326,6 @@ const ObjectsListPage: React.FC = () => {
             ))}
           </Row>
 
-          {/* Paginacja - wyświetlana tylko gdy jest więcej niż 6 obiektów */}
           {pagination.total > 6 && (
             <nav aria-label="Nawigacja stron">
               <ul className="pagination justify-content-center">

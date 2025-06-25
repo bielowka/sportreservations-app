@@ -11,7 +11,6 @@ interface SportObject {
   name: string;
   timeSlotDuration: number;
   minReservationDuration: number;
-  // inne pola...
 }
 
 const ObjectReservationPage: React.FC = () => {
@@ -118,11 +117,9 @@ const ObjectReservationPage: React.FC = () => {
         return;
       }
 
-      // Sukces - pokaż komunikat i ukryj sidebar
       alert('Rezerwacja została utworzona pomyślnie!');
       setSelectedSlot(null);
-      
-      // Odśwież dane w tabeli slotów
+
       handleReservationCreated();
       
     } catch (error) {
@@ -132,8 +129,6 @@ const ObjectReservationPage: React.FC = () => {
   };
 
   const handleReservationCreated = () => {
-    // Ta funkcja zostanie wywołana po utworzeniu rezerwacji
-    // TimeSlotTable automatycznie odświeży dane dzięki useEffect
   };
 
   const handleCancelReservation = () => {

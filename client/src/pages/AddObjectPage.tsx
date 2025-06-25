@@ -48,8 +48,7 @@ const AddObjectPage: React.FC = () => {
       ...prev,
       [name]: value
     }));
-    
-    // Clear error when user starts typing
+
     if (errors[name as keyof AddObjectForm]) {
       setErrors(prev => ({
         ...prev,
@@ -125,7 +124,6 @@ const AddObjectPage: React.FC = () => {
     }
   };
 
-  // Sprawdź czy użytkownik jest zalogowany i ma rolę administratora
   if (!isAuthenticated) {
     return (
       <Container className="py-4">
@@ -195,7 +193,6 @@ const AddObjectPage: React.FC = () => {
               )}
 
               <Form onSubmit={handleSubmit}>
-                {/* Nazwa obiektu */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-tag me-1"></i>
@@ -218,7 +215,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Lokalizacja */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-map-marker-alt me-1"></i>
@@ -241,7 +237,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Godziny otwarcia */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-clock me-1"></i>
@@ -282,7 +277,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Typ obiektu */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-futbol me-1"></i>
@@ -310,7 +304,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Cena za godzinę */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-money-bill-wave me-1"></i>
@@ -330,7 +323,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Maksymalna pojemność */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-users me-1"></i>
@@ -349,7 +341,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Opis */}
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <i className="fas fa-info-circle me-1"></i>
@@ -368,7 +359,6 @@ const AddObjectPage: React.FC = () => {
                   </Form.Text>
                 </Form.Group>
 
-                {/* Przyciski */}
                 <div className="d-flex justify-content-between align-items-center">
                   <Button 
                     variant="secondary" 
@@ -402,7 +392,6 @@ const AddObjectPage: React.FC = () => {
         </Col>
       </Row>
 
-      {/* Podgląd obiektu */}
       <Row className="mt-4">
         <Col lg={8} md={10} className="mx-auto">
           <Card>

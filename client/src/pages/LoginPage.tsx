@@ -7,7 +7,6 @@ const LoginPage: React.FC = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Jeśli użytkownik jest już zalogowany, przekieruj do strony głównej
   React.useEffect(() => {
     if (isAuthenticated) {
       navigate('/');

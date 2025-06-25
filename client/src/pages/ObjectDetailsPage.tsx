@@ -38,8 +38,7 @@ const ObjectDetailsPage: React.FC = () => {
       const response = await objectsApi.getObject(parseInt(id!));
       if (response.data) {
         setObject(response.data);
-        
-        // Sprawdź czy administrator próbuje przeglądać obiekt, który nie należy do niego
+
         if (user?.role === 'admin' && response.data.ownerId && response.data.ownerId !== user.id) {
           setError('Brak dostępu. Możesz przeglądać tylko swoje obiekty.');
           return;
@@ -171,7 +170,6 @@ const ObjectDetailsPage: React.FC = () => {
 
   return (
     <Container>
-      {/* Główne informacje o obiekcie */}
       <Row>
         <Col lg={8}>
           <Card className="shadow-sm mb-4">
@@ -230,13 +228,11 @@ const ObjectDetailsPage: React.FC = () => {
 
         {/* Panel boczny */}
         <Col lg={4}>
-          {/* Przycisk rezerwacji */}
           <Button as={Link as any} to={`/objects/${id}/reserve`} variant="primary" size="lg" className="w-100 py-3 mb-4">
             <i className="fas fa-calendar-plus me-2"></i>
             Zarezerwuj termin
           </Button>
 
-          {/* Informacje kontaktowe */}
           <Card className="shadow-sm">
             <Card.Header>
               <h6 className="mb-0">
@@ -264,7 +260,6 @@ const ObjectDetailsPage: React.FC = () => {
         </Col>
       </Row>
 
-      {/* Sekcja rezerwacji - widoczna tylko dla administratorów */}
       {user?.role === 'admin' && (
         <Card className="mb-4">
           <Card.Header>
@@ -328,10 +323,8 @@ const ObjectDetailsPage: React.FC = () => {
         </Card>
       )}
 
-      {/* Sekcja harmonogramu */}
       <ScheduleDisplay objectId={object.id} />
 
-      {/* Przycisk powrotu */}
       <div className="d-flex justify-content-center mt-4">
         <Button variant="outline-secondary" as={Link as any} to="/objects">
           <i className="fas fa-arrow-left me-2"></i>

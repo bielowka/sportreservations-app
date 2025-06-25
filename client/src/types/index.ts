@@ -1,4 +1,3 @@
-// User types
 export interface User {
   id: number;
   name: string;
@@ -12,7 +11,6 @@ export interface User {
   updatedAt?: string;
 }
 
-// Sport object types
 export interface SportObject {
   id: number;
   name: string;
@@ -40,7 +38,6 @@ export type ObjectType =
   | 'gym'
   | 'other';
 
-// Reservation types
 export interface Reservation {
   id: number;
   objectId: number;
@@ -60,7 +57,6 @@ export interface Reservation {
 
 export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 
-// API Response types
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -82,7 +78,6 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-// Form types
 export interface AddObjectForm {
   name: string;
   location: string;
@@ -106,7 +101,6 @@ export interface RegisterForm {
   confirmPassword: string;
 }
 
-// Filter types
 export interface ObjectFilters {
   search?: string;
   type?: ObjectType;

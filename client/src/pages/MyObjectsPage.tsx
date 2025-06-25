@@ -45,18 +45,15 @@ const MyObjectsPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Sprawdź czy użytkownik jest administratorem
   useEffect(() => {
     if (user && user.role !== 'admin') {
       navigate('/');
     }
   }, [user, navigate]);
 
-  // Sprawdź komunikaty o sukcesie z navigation state
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      // Wyczyść state po wyświetleniu komunikatu
       navigate(location.pathname, { replace: true });
     }
   }, [location.state, navigate, location.pathname]);
@@ -152,7 +149,6 @@ const MyObjectsPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Komunikat o sukcesie */}
           {successMessage && (
             <div className="alert alert-success alert-dismissible fade show" role="alert">
               <i className="fas fa-check-circle me-2"></i>
@@ -166,7 +162,6 @@ const MyObjectsPage: React.FC = () => {
             </div>
           )}
 
-          {/* Filtry wyszukiwania */}
           <div className="card mb-4">
             <div className="card-body">
               <div className="row">
@@ -218,7 +213,6 @@ const MyObjectsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Lista obiektów */}
           {loading ? (
             <div className="text-center">
               <div className="spinner-border" role="status">
@@ -291,7 +285,6 @@ const MyObjectsPage: React.FC = () => {
                 ))}
               </div>
 
-              {/* Paginacja */}
               {pagination.totalPages > 1 && (
                 <nav aria-label="Nawigacja stron">
                   <ul className="pagination justify-content-center">
